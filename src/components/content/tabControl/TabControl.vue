@@ -46,7 +46,7 @@ export default {
 }
 .tab-control-item {
   flex: 1;
-  height: 40px;
+  /* height: 40px; */
 }
 .active {
   color: var(--color-high-text);
