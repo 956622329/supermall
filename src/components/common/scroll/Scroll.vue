@@ -46,25 +46,25 @@ export default {
     }
 
     // 3.监听scroll滚动到底部
-    if (this.pullUpLoad) {
-      this.scroll.on("pullingUp", () => {
-        this.$emit("pullingUp");
-      });
-    }
+    // if (this.pullUpLoad) {
+    //   this.scroll.on("pullingUp", () => {
+    //     this.$emit("pullingUp");
+    //   });
+    // }
   },
   methods: {
     scrollTo(x, y, time = 300) {
       this.scroll && this.scroll.scrollTo(x, y, time);
-    },
-    refresh() {
-      this.scroll && this.scroll.refresh();
-    },
-    finishPullUp() {
-      this.scroll && this.scroll.finishPullUp();
-    },
-    getScrollY() {
-      return this.scroll ? this.scroll.y : 0;
     }
+    // refresh() {
+    //   this.scroll && this.scroll.refresh();
+    // },
+    // finishPullUp() {
+    //   this.scroll && this.scroll.finishPullUp();
+    // },
+    // getScrollY() {
+    //   return this.scroll ? this.scroll.y : 0;
+    // }
   }
 };
 </script>
