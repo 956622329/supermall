@@ -7,6 +7,8 @@
       ref="scroll"
       :probe-type="3"
       @scroll="contentScroll"
+      :pull-up-load="true"
+      @pullingUp="loadMore"
     >
       <home-swiper :banners="banners"></home-swiper>
       <recommend-view :recommends="recommends"></recommend-view>
@@ -19,7 +21,7 @@
       <goods-list :goods="showGoods"></goods-list>
     </scroll>
 
-    <back-top @click.native="backClick"></back-top>
+    <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
   </div>
 </template>
 
@@ -56,7 +58,8 @@ export default {
         new: { page: 0, list: [] },
         sell: { page: 0, list: [] }
       },
-      currentType: "pop"
+      currentType: "pop",
+      isShowBackTop: false
     };
   },
   computed: {
@@ -89,7 +92,10 @@ export default {
       this.$refs.scroll.scrollTo(0, 0, 500);
     },
     contentScroll(position) {
-      position.y < -200;
+      this.isShowBackTop = position.y < -200;
+    },
+    loadMore() {
+      this.getHomeGoods(this.currentType);
     },
     // 网络请求方法
     getHomeMultidata() {
