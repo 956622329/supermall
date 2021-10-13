@@ -1,6 +1,6 @@
 <template>
   <div>
-    <scroll class="content">
+    <scroll class="content" :probe-type="3" :pull-up-load="true">
       <ul>
         <li>个人信息1</li>
         <li>个人信息2</li>
