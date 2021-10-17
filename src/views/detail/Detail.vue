@@ -1,7 +1,15 @@
 <template>
   <div id="detail">
-    <detail-nav-bar class="detail-nav" @titleClick="titleClick" />
-    <scroll class="content" ref="scroll">
+    <detail-nav-bar class="detail-nav" @titleClick="titleClick" ref="nav" />
+    <scroll
+      class="content"
+      ref="scroll"
+      :probe-type="3"
+      @scroll="contentScroll"
+    >
+      <ul>
+        <li v-for="item in $store.state.cartList">{{ item }}</li>
+      </ul>
       <detail-swiper :top-images="topImages" />
       <detail-base-info :goods="goods" />
       <detail-shop-info :shop="shop" />
@@ -10,6 +18,8 @@
       <detail-comment-info ref="comment" :commentInfo="commentInfo" />
       <goods-list ref="recommend" :goods="recommends" />
     </scroll>
+    <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
+    <detail-bottom-bar @addCart="addCart" />
   </div>
 </template>
 
@@ -22,6 +32,7 @@ import DetailGoodsInfo from "./childComps/DetailGoodsInfo";
 import DetailParamInfo from "./childComps/DetailParamInfo";
 
 import Scroll from "components/common/scroll/Scroll";
+import { backTopMixin } from "../../common/mixin";
 
 import {
   getDetail,
@@ -33,6 +44,7 @@ import {
 import DetailCommentInfo from "./childComps/DetailCommentInfo.vue";
 import GoodsList from "components/content/goods/GoodsList.vue";
 import { debounce } from "common/utils";
+import DetailBottomBar from "./childComps/DetailBottomBar.vue";
 
 export default {
   name: "Detail",
@@ -45,8 +57,10 @@ export default {
     DetailParamInfo,
     Scroll,
     DetailCommentInfo,
-    GoodsList
+    GoodsList,
+    DetailBottomBar
   },
+  mixins: [backTopMixin],
   data() {
     return {
       iid: null,
@@ -58,7 +72,8 @@ export default {
       commentInfo: {},
       recommends: [],
       themeTopYs: [],
-      getthemeTopYs: null
+      getThemeTopYs: null,
+      currentIndex: 0
     };
   },
   created() {
@@ -129,12 +144,14 @@ export default {
     getRecommend().then(res => {
       this.recommends = res.data.list;
     });
-    this.getthemeTopYs = debounce(() => {
+    //防抖
+    this.getThemeTopYs = debounce(() => {
       this.themeTopYs = [];
       this.themeTopYs.push(0);
       this.themeTopYs.push(this.$refs.params.$el.offsetTop);
       this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
       this.themeTopYs.push(this.$refs.recommend.$el.offsetTop);
+      this.themeTopYs.push(Number.MAX_VALUE); //骇客做法,给数组最后加一个很大的值Number.MAX_VALUE，空间换时间
       console.log(this.themeTopYs);
     });
   },
@@ -142,11 +159,76 @@ export default {
   updated() {},
   methods: {
     imageLoad() {
-      this.getthemeTopYs;
+      console.log("-------");
+      this.getThemeTopYs();
     },
     titleClick(index) {
-      console.log(index);
       this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 100);
+    },
+    contentScroll(position) {
+      const positiony = -position.y;
+      // 1.判断BackTop是否显示
+      this.isShowBackTop = position.y < -200;
+
+      // if (y < themeTopYs[1]) {
+      //   this.navClickY = 0;
+      // } else if (y > themeTopYs[1] && y < themeTopYs[2]) {
+      //   this.navClickY = 1;
+      // } else if (y > themeTopYs[2] && y < themeTopYs[3]) {
+      //   this.navClickY = 2;
+      // } else {
+      //   this.navClickY = 3;
+      // }
+
+      // 2.positoiny和主题中值进行对比
+      //[0，7938，9120，9452，Number.MAX_VALUE]// console.log(Number.MAX_VALUE);
+      // positoiny 在 0 和 7938 之间，index=0
+      // positoiny 在 =7938 和 9120 之间，index=1
+      // positoiny 在 9120 和 9452 之间，index=2
+      // positoiny 在 9120 和 非常大的值之间，index =3
+
+      //positoiny 大于等于3120值，index =3
+
+      // for (let i = 0; i < this.themeTopYs.length; i++) {
+      //   if (
+      //     this.currentIndex !== i &&
+      //     ((i < this.themeTopYs.length - 1 &&
+      //       positiony >= this.themeTopYs[i] &&
+      //       positiony < this.themeTopYs[i + 1]) ||
+      //       (i === this.themeTopYs.length - 1 &&
+      //         positiony >= this.themeTopYs[i]))
+      //   ) {
+      //     this.currentIndex = i;
+      //     console.log(i);
+      //     this.$refs.nav.currentIndex = this.currentIndex;
+      //   }
+      // }
+
+      //骇客做法,给数组最后加一个很大的值Number.MAX_VALUE，空间换时间
+      for (let i = 0; i < this.themeTopYs.length - 1; i++) {
+        if (
+          this.currentIndex != i &&
+          positiony > this.themeTopYs[i] &&
+          positiony < this.themeTopYs[i + 1]
+        ) {
+          this.currentIndex = i;
+          console.log(i);
+          this.$refs.nav.currentIndex = this.currentIndex;
+        }
+      }
+    },
+    addCart() {
+      //1.获取购物车需要展示的商品信息
+      const product = {};
+      product.image = this.topImages[0];
+      product.title = this.goods.title;
+      product.desc = this.goods.desc;
+      product.price = this.goods.realPrice;
+      product.iid = this.iid;
+
+      // this.$store.cartList.push(product);
+      // this.$store.commit();
+      this.$store.dispatch("addCart", product);
     }
   }
 };
@@ -167,6 +249,6 @@ export default {
 }
 
 .content {
-  height: calc(100% - 44px);
+  height: calc(100% - 44px - 49px);
 }
 </style>

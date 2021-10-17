@@ -32,6 +32,7 @@ export default {
       currentIndex: 0
     };
   },
+  mounted() {},
   methods: {
     titleClick(index) {
       this.currentIndex = index;
