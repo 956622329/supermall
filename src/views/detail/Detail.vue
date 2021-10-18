@@ -7,9 +7,6 @@
       :probe-type="3"
       @scroll="contentScroll"
     >
-      <ul>
-        <li v-for="item in $store.state.cartList">{{ item }}</li>
-      </ul>
       <detail-swiper :top-images="topImages" />
       <detail-base-info :goods="goods" />
       <detail-shop-info :shop="shop" />
