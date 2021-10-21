@@ -8,14 +8,14 @@
 export default {
   name: "Toast",
   props: {
-    message: {
-      type: String,
-      default: ""
-    },
-    show: {
-      type: Boolean,
-      default: false
-    }
+    // message: {
+    //   type: String,
+    //   default: ""
+    // },
+    // show: {
+    //   type: Boolean,
+    //   default: false
+    // }
   },
   data() {
     return {
@@ -44,6 +44,7 @@ export default {
   left: 50%;
   transform: translate(-50%, -50%);
   padding: 8px 10px;
+  z-index: 999;
 
   background-color: rgba(0, 0, 0, 0.75);
   color: #fff;
