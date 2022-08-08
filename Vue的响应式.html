@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+<!--
+1.app.message修改数据，Vue内部是如何监听message数据的改变
+*object.defineProperty ->监听对象属性的改变
+2.当数据发生改变，Vue是如何知道要通知哪些人，界面发生刷新
+*发布订阅者模式 -->
+
+<!--
+message定义在data里被touch到时，会生成getter和setter方法，然后使用到message的地方会对应生成watcher，被放到dep容器里。
+当message发生改变时，会遍历通知message对应dep里的所有watcher，去调用他们的update方法进行更新
+这看不懂的赶紧去补高级js，属性访问器，构造函数，class，对象原型，属性的覆盖追加等知识！不要以为js不重要，大厂就是问这种东西，vue的用法不会问你的！亲身体会。
+-->
+
+<div id="app">
+  {{message}}
+  {{message}}
+  {{message}}
+</div>
+
+<script>
+  const obj={
+    message:'hahaha',
+    name:'ztc'
+  }
+
+  Object.keys(obj).forEach(key => {
+    let value=obj[key]
+
+    Object.defineProperty(obj,key,{
+      set(newValue){
+        console.log('监听'+key+'改变');
+        value=newValue
+      },
+      get(){
+        console.log('获取name对应的值');
+        return value
+      }
+    })
+  });
+
+</script>
+
+<script src="./node_modules/vue/dist/vue.js"></script>
+<script>
+const app=new Vue({
+  el:'#app',
+  data: {
+    message:'hahaha',
+    name:'ztc'
+  },
+})
+</script>
+
+</body>
+</html>

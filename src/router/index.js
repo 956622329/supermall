@@ -8,6 +8,13 @@ const Profile = () => import('@/views/profile/Profile')
 const Detail = () => import('@/views/detail/Detail')
 
 
+// 解决重复点击导航路由报错
+// const originalPush = VueRouter.prototype.push
+// VueRouter.prototype.push = function push(location) {
+//   return originalPush.call(this,location).catch(err=>err)
+// }
+
+
 // 1.安装插件
 Vue.use(VueRouter)
 

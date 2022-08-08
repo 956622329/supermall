@@ -81,11 +81,11 @@ export default {
   created() {
     // 一.保存传入的iid
     this.iid = this.$route.params.iid;
-
+    console.log(this.iid);
     // 二.根据iid请求详情数据
     getDetail(this.iid).then(res => {
       // 1.获取顶部的图片轮播数据
-      // console.log(res);
+      console.log(res);
       const data = res.result;
 
       //2.取出轮播图的数据
@@ -144,6 +144,7 @@ export default {
 
     //三.请求推荐数据
     getRecommend().then(res => {
+      console.log(res);
       this.recommends = res.data.list;
     });
     //防抖

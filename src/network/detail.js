@@ -3,16 +3,15 @@ export function getDetail(iid) {
   return request({
     url: '/detail',
     params: {
-    iid
-  }
+      iid
+    }
   })
 }
 export function getRecommend() {
   return request({
-    url:'/recommend'
+    url: '/recommend'
   })
 }
-
 export class Goods {
   constructor(itemInfo, columns, services) {
     this.title = itemInfo.title
